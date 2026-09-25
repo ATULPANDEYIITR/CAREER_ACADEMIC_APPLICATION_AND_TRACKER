@@ -1,14 +1,21 @@
 ﻿function getTrackerSettings() {
-    return JSON.parse(
-        localStorage.getItem("career_tracker_settings") ||
-        JSON.stringify({
-            rankingYear: "2026",
-            jobsPerPage: 25,
-            defaultJobLocation: "India",
-            phdRegion: "Europe",
-            autoSave: true
-        })
-    );
+    const defaults = {
+        rankingYear: "2026",
+        jobsPerPage: 25,
+        defaultJobLocation: "India",
+        phdRegion: "Europe",
+        autoSave: true
+    };
+
+    try {
+        const saved = JSON.parse(
+            localStorage.getItem("career_tracker_settings") || "{}"
+        );
+
+        return { ...defaults, ...saved };
+    } catch {
+        return defaults;
+    }
 }
 
 function saveTrackerSettings(settings) {
@@ -33,7 +40,7 @@ function renderSettingsModule() {
             <div class="panel-header">
                 <div>
                     <h2>PhD Ranking Configuration</h2>
-                    <p>The ranking year remains configurable and is not hardcoded into the tracker.</p>
+                    <p>Configure the ranking year and university coverage targets.</p>
                 </div>
             </div>
 
@@ -51,12 +58,12 @@ function renderSettingsModule() {
 
                 <label>
                     CS Target Universities
-                    <input id="settingCsTarget" type="number" min="1" value="${APP_DATA.csTarget || 300}" />
+                    <input id="settingCsTarget" type="number" min="1" value="${APP_DATA.csTarget || 300}">
                 </label>
 
                 <label>
                     Management Target Universities
-                    <input id="settingManagementTarget" type="number" min="1" value="${APP_DATA.managementTarget || 300}" />
+                    <input id="settingManagementTarget" type="number" min="1" value="${APP_DATA.managementTarget || 300}">
                 </label>
             </div>
         </div>
@@ -65,7 +72,7 @@ function renderSettingsModule() {
             <div class="panel-header">
                 <div>
                     <h2>Job Search Preferences</h2>
-                    <p>Default preferences for the India-focused job tracker.</p>
+                    <p>Default preferences for India-focused job tracking.</p>
                 </div>
             </div>
 
@@ -95,7 +102,7 @@ function renderSettingsModule() {
             <div class="panel-header">
                 <div>
                     <h2>System Preferences</h2>
-                    <p>Local browser storage and geographic coverage settings.</p>
+                    <p>Control local tracker behavior.</p>
                 </div>
             </div>
 
@@ -118,7 +125,9 @@ function renderSettingsModule() {
             </div>
 
             <div class="modal-actions">
-                <button class="primary-btn" onclick="saveSettings()">Save Settings</button>
+                <button class="primary-btn" id="saveSettingsButton">
+                    Save Settings
+                </button>
             </div>
 
             <div id="settingsMessage"></div>
@@ -128,43 +137,71 @@ function renderSettingsModule() {
             <div class="panel-header">
                 <div>
                     <h2>Data Management</h2>
-                    <p>Export your locally stored tracker data before making major changes.</p>
+                    <p>Export your tracker data as a JSON file.</p>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button class="secondary-btn" onclick="exportTrackerData()">Export JSON</button>
-                <button class="secondary-btn" onclick="clearTrackerData()">Clear Local Data</button>
+                <button class="secondary-btn" id="exportJsonButton">
+                    Export JSON
+                </button>
             </div>
+
+            <div id="exportMessage"></div>
         </div>
     `;
 
     document.getElementById("settingRankingYear").value = settings.rankingYear;
-    document.getElementById("settingJobsPerPage").value = settings.jobsPerPage;
+    document.getElementById("settingJobsPerPage").value = String(settings.jobsPerPage);
     document.getElementById("settingJobLocation").value = settings.defaultJobLocation;
     document.getElementById("settingPhdRegion").value = settings.phdRegion;
     document.getElementById("settingAutoSave").value = String(settings.autoSave);
+
+    document.getElementById("saveSettingsButton").addEventListener(
+        "click",
+        saveSettings
+    );
+
+    document.getElementById("exportJsonButton").addEventListener(
+        "click",
+        exportTrackerData
+    );
 }
 
 function saveSettings() {
     const settings = {
         rankingYear: document.getElementById("settingRankingYear").value,
-        jobsPerPage: Number(document.getElementById("settingJobsPerPage").value),
-        defaultJobLocation: document.getElementById("settingJobLocation").value,
-        phdRegion: document.getElementById("settingPhdRegion").value,
-        autoSave: document.getElementById("settingAutoSave").value === "true"
+        jobsPerPage: Number(
+            document.getElementById("settingJobsPerPage").value
+        ),
+        defaultJobLocation:
+            document.getElementById("settingJobLocation").value,
+        phdRegion:
+            document.getElementById("settingPhdRegion").value,
+        autoSave:
+            document.getElementById("settingAutoSave").value === "true"
     };
+
+    const csTarget =
+        Number(document.getElementById("settingCsTarget").value) || 300;
+
+    const managementTarget =
+        Number(document.getElementById("settingManagementTarget").value) || 300;
 
     saveTrackerSettings(settings);
 
-    APP_DATA.csTarget =
-        Number(document.getElementById("settingCsTarget").value) || 300;
+    localStorage.setItem(
+        "career_tracker_cs_target",
+        String(csTarget)
+    );
 
-    APP_DATA.managementTarget =
-        Number(document.getElementById("settingManagementTarget").value) || 300;
+    localStorage.setItem(
+        "career_tracker_management_target",
+        String(managementTarget)
+    );
 
-    localStorage.setItem("career_tracker_cs_target", APP_DATA.csTarget);
-    localStorage.setItem("career_tracker_management_target", APP_DATA.managementTarget);
+    APP_DATA.csTarget = csTarget;
+    APP_DATA.managementTarget = managementTarget;
 
     const message = document.getElementById("settingsMessage");
 
@@ -180,42 +217,65 @@ function saveSettings() {
 function exportTrackerData() {
     const data = {
         exportedAt: new Date().toISOString(),
-        jobs: APP_DATA.jobs || [],
-        phdCS: APP_DATA.phdCS || [],
-        phdManagement: APP_DATA.phdManagement || [],
-        applications: typeof getApplications === "function" ? getApplications() : [],
-        companies: typeof getCompanies === "function" ? getCompanies() : [],
-        tasks: typeof getTrackerTasks === "function" ? getTrackerTasks() : [],
+        jobs: Array.isArray(APP_DATA.jobs) ? APP_DATA.jobs : [],
+        phdCS: Array.isArray(APP_DATA.phdCS) ? APP_DATA.phdCS : [],
+        phdManagement: Array.isArray(APP_DATA.phdManagement)
+            ? APP_DATA.phdManagement
+            : [],
+        applications:
+            typeof getApplications === "function"
+                ? getApplications()
+                : [],
+        companies:
+            typeof getCompanies === "function"
+                ? getCompanies()
+                : [],
+        tasks:
+            typeof getTrackerTasks === "function"
+                ? getTrackerTasks()
+                : [],
         settings: getTrackerSettings()
     };
 
-    const blob = new Blob(
-        [JSON.stringify(data, null, 2)],
-        { type: "application/json" }
-    );
+    try {
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], {
+            type: "application/json"
+        });
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
 
-    link.href = url;
-    link.download =
-        "career-academic-tracker-" +
-        new Date().toISOString().slice(0, 10) +
-        ".json";
+        link.href = url;
+        link.download =
+            "career-academic-tracker-" +
+            new Date().toISOString().slice(0, 10) +
+            ".json";
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-    URL.revokeObjectURL(url);
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 1000);
+
+        const message = document.getElementById("exportMessage");
+
+        if (message) {
+            message.innerHTML = `
+                <div class="settings-success">
+                    JSON export created successfully.
+                </div>
+            `;
+        }
+    } catch (error) {
+        alert("JSON export failed: " + error.message);
+    }
 }
 
 function clearTrackerData() {
-    const confirmed = confirm(
-        "This will remove locally stored applications, companies, tasks and settings. Continue?"
-    );
-
-    if (!confirmed) {
+    if (!confirm("Clear locally stored tracker data?")) {
         return;
     }
 
@@ -227,8 +287,6 @@ function clearTrackerData() {
     localStorage.removeItem("career_tracker_phd_management");
     localStorage.removeItem("career_tracker_cs_target");
     localStorage.removeItem("career_tracker_management_target");
-
-    alert("Local tracker data cleared.");
 
     renderSettingsModule();
 }

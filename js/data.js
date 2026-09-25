@@ -66,3 +66,17 @@
     csTarget: 300,
     managementTarget: 300
 };
+
+try {
+    const savedCsTarget = localStorage.getItem("career_tracker_cs_target");
+    const savedManagementTarget = localStorage.getItem("career_tracker_management_target");
+
+    if (savedCsTarget) {
+        APP_DATA.csTarget = Number(savedCsTarget);
+    }
+
+    if (savedManagementTarget) {
+        APP_DATA.managementTarget = Number(savedManagementTarget);
+    }
+} catch {
+}
