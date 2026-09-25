@@ -203,7 +203,7 @@ function setPage(page) {
     search.value = "";
 
     if (page === "dashboard") dashboard();
-    else if (page === "jobs" || page === "india" || page === "remote") renderJobsModule(APP_DATA.jobs);`r`n    else if (page === "phd-cs" || page === "cs" || page === "phd") renderPhdCSModule(APP_DATA.phdCS);`r`n    else if (page === "phd-management" || page === "management" || page === "mgmt") renderPhdManagementModule(APP_DATA.phdManagement);`r`n    else if (page === "applications" || page === "application") renderApplicationsModule();`r`n    else if (page === "interviews" || page === "interview") renderInterviewsModule();
+    else if (page === "jobs" || page === "india" || page === "remote") renderJobsModule(APP_DATA.jobs);`r`n    else if (page === "phd-cs" || page === "cs" || page === "phd") renderPhdCSModule(APP_DATA.phdCS);`r`n    else if (page === "phd-management" || page === "management" || page === "mgmt") renderPhdManagementModule(APP_DATA.phdManagement);`r`n    else if (page === "applications" || page === "application") renderApplicationsModule();`r`n    else if (page === "interviews" || page === "interview") renderInterviewsModule();`r`n    else if (page === "companies" || page === "company") renderCompaniesModule();
     else if (page === "phd-cs") phd("cs");
     else if (page === "phd-management") phd("management");
     else if (page === "applications") placeholder("Applications", "Track submitted, saved, rejected and active applications.");
@@ -256,6 +256,7 @@ document.querySelectorAll("[data-add]").forEach(button => {
 });
 
 dashboard();
+
 
 
 
