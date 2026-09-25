@@ -203,7 +203,7 @@ function setPage(page) {
     search.value = "";
 
     if (page === "dashboard") dashboard();
-    else if (page === "jobs" || page === "india" || page === "remote") jobs();
+    else if (page === "jobs" || page === "india" || page === "remote") renderJobsModule(APP_DATA.jobs);
     else if (page === "phd-cs") phd("cs");
     else if (page === "phd-management") phd("management");
     else if (page === "applications") placeholder("Applications", "Track submitted, saved, rejected and active applications.");
@@ -256,3 +256,4 @@ document.querySelectorAll("[data-add]").forEach(button => {
 });
 
 dashboard();
+
