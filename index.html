@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career & Academic Command Center</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-mark">CA</div>
+            <div>
+                <strong>COMMAND</strong>
+                <span>CENTER</span>
+            </div>
+        </div>
+
+        <nav>
+            <button class="nav-item active" data-page="dashboard">DASHBOARD</button>
+
+            <div class="nav-section">JOBS</div>
+            <button class="nav-item" data-page="jobs">All Jobs</button>
+            <button class="nav-item" data-page="india">India</button>
+            <button class="nav-item" data-page="remote">Remote India</button>
+            <button class="nav-item" data-page="applications">Applications</button>
+            <button class="nav-item" data-page="interviews">Interviews</button>
+            <button class="nav-item" data-page="companies">Companies</button>
+
+            <div class="nav-section">PHD — CS</div>
+            <button class="nav-item" data-page="phd-cs">Europe</button>
+            <button class="nav-item" data-page="universities-cs">Universities</button>
+            <button class="nav-item" data-page="positions-cs">Positions</button>
+            <button class="nav-item" data-page="supervisors-cs">Supervisors</button>
+
+            <div class="nav-section">PHD — MANAGEMENT</div>
+            <button class="nav-item" data-page="phd-management">Europe</button>
+            <button class="nav-item" data-page="universities-management">Universities</button>
+            <button class="nav-item" data-page="positions-management">Positions</button>
+            <button class="nav-item" data-page="supervisors-management">Supervisors</button>
+
+            <div class="nav-section">SYSTEM</div>
+            <button class="nav-item" data-page="calendar">Calendar</button>
+            <button class="nav-item" data-page="tasks">Tasks</button>
+            <button class="nav-item" data-page="analytics">Analytics</button>
+            <button class="nav-item" data-page="settings">Settings</button>
+        </nav>
+    </aside>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <div class="eyebrow">CAREER + ACADEMIC INTELLIGENCE</div>
+                <h1>Command Center</h1>
+            </div>
+
+            <div class="top-actions">
+                <input id="globalSearch" type="search" placeholder="Search jobs, universities, positions...">
+                <button id="themeToggle" class="icon-button">◐</button>
+                <button id="quickAdd" class="primary-button">+ QUICK ADD</button>
+            </div>
+        </header>
+
+        <section id="content"></section>
+
+    </main>
+</div>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-card">
+        <button id="closeModal" class="modal-close">×</button>
+        <h2>Quick Add</h2>
+        <p>Add a record to your personal tracker.</p>
+
+        <div class="quick-grid">
+            <button data-add="job">Add Job</button>
+            <button data-add="application">Add Application</button>
+            <button data-add="phd">Add PhD Position</button>
+            <button data-add="task">Add Task</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
