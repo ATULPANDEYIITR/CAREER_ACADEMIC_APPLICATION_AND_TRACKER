@@ -478,3 +478,29 @@ th {
         grid-template-columns: 1fr;
     }
 }
+
+.settings-grid {
+    margin-top: 10px;
+}
+
+.settings-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.settings-grid input,
+.settings-grid select {
+    width: 100%;
+}
+
+.settings-success {
+    margin-top: 15px;
+    padding: 12px 15px;
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    color: var(--green);
+    background: rgba(0,255,150,0.05);
+}
